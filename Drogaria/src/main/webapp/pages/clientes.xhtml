@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Clientes</title>
+	<h:outputScript library="js" name="scripts.js" />
+</h:head>
+<h:body>
+	<p:growl id="message"/>
+	<h:form id="formListagem">
+		<p:panel header="Clientes - Listagem">
+			<p:dataTable id="table" emptyMessage="Nenhum registro encontrado"
+				paginator="true" value="#{clienteBean.clientes}"
+				var="cliente" rows="5">
+				<f:facet name="header">
+					<p:commandButton value="Novo" oncomplete="PF('dlgCadastro').show();"
+						actionListener="#{clienteBean.novo()}" 
+						update=":message :formCadastro:panelCadastro">
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</f:facet>
+				<p:column headerText="Nome" filterBy="#{cliente.pessoa.nome}"
+					sortBy="#{cliente.pessoa.nome}">
+					<h:outputText value="#{cliente.pessoa.nome}" />
+				</p:column>
+				<p:column headerText="CPF" filterBy="#{cliente.pessoa.cpf}"
+					sortBy="#{cliente.pessoa.cpf}">
+					<h:outputText value="#{cliente.pessoa.cpf}" />
+				</p:column>
+				<p:column headerText="Data de Cadastro">
+					<h:outputText value="#{cliente.dataCadastro}">
+						<f:convertDateTime locale="pt_BR"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Liberado" filterBy="#{cliente.textoLiberado}">
+					<h:outputText value="#{cliente.textoLiberado}" />
+				</p:column>
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash" actionListener="#{clienteBean.excluir}"
+						update=":message :formListagem:table" >
+						<p:confirm header="Confirmação" message="Deseja excluir o cliente?" icon="ui-icon-alert" />
+						<f:attribute name="clienteSelecionado" value="#{cliente}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{clienteBean.alterar}" 
+						update=":formCadastro:panelCadastro :message" 
+						oncomplete="PF('dlgCadastro').show();" >
+						<f:attribute name="clienteSelecionado" value="#{cliente}" />
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener"/>
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close"/>
+			</p:confirmDialog>
+		</p:panel>
+	</h:form>
+
+	<p:dialog header="Clientes - Cadastro" widgetVar="dlgCadastro"
+		modal="true" draggable="false" resizable="false">
+		<h:form id="formCadastro">
+			<h:panelGrid id="panelCadastro" columns="2">
+				<p:outputLabel for="pessoa" value="Pessoa: " />
+				<p:selectOneMenu id="pessoa" filter="true" value="#{clienteBean.cliente.pessoa}"
+					required="true" requiredMessage="Campo Pessoa é obrigatóro"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem noSelectionOption="true" itemLabel="Selecione uma Pessoa" />
+					<f:selectItems value="#{clienteBean.pessoas}" var="pessoa" 
+						itemLabel="#{pessoa.nome} - #{pessoa.cpf}" itemValue="#{pessoa}"/>
+				</p:selectOneMenu>
+			
+				<p:outputLabel for="dataCadastro" value="Data de Cadastro: " />
+				<p:calendar id="dataCadastro" value="#{clienteBean.cliente.dataCadastro}" required="true"
+					requiredMessage="O campo Data de Cadastro é obrigatório" size="10" 
+					locale="pt_BR" />
+											
+				<p:outputLabel for="liberado" value="Liberado: " />
+				<p:selectBooleanCheckbox id="liberado" value="#{clienteBean.cliente.liberado}" />
+				
+			</h:panelGrid>
+			<h:panelGrid columns="2" >
+				<p:commandButton value="Salvar" actionListener="#{clienteBean.salvar()}" 
+					update=":message :formListagem:table :formCadastro:panelCadastro" />
+				<p:commandButton value="Cancelar" oncomplete="PF('dlgCadastro').hide();" />
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>

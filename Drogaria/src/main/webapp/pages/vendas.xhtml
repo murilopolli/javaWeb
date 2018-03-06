@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Vendas</title>
+</h:head>
+<h:body>
+	<p:growl id="message" />
+	
+	<h:form id="form">
+		<p:panel header="Produtos">
+			<p:dataTable id="tableProdutos" emptyMessage="Nenhum registro encontrado"
+				paginator="true" value="#{vendaBean.produtos}" var="produto" rows="5">
+				
+				<p:column headerText="Descrição" sortBy="#{produto.descricao}"
+					filterBy="#{produto.descricao}">
+					<h:outputText value="#{produto.descricao}" />
+				</p:column>
+				<p:column headerText="Quantidade" sortBy="#{produto.quantidade}">
+					<h:outputText value="#{produto.quantidade}" />
+				</p:column>
+				<p:column headerText="Preço" sortBy="#{produto.preco}">
+					<h:outputText value="#{produto.preco}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Fabricante"
+					sortBy="#{produto.fabricante.descricao}"
+					filterBy="#{produto.fabricante.descricao}">
+					<h:outputText value="#{produto.fabricante.descricao}" />
+				</p:column>
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-plus" update=":message :form:tableCarrinho" actionListener="#{vendaBean.adicionar}" >
+						<f:attribute name="produtoSelecionado" value="#{produto}" />
+					</p:commandButton>
+					
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:panel header="Carrinho de Compras">
+			<p:dataTable id="tableCarrinho" emptyMessage="Nenhum registro encontrado"
+				paginator="true" value="#{vendaBean.itens}" var="item" rows="5">
+				
+				<p:column headerText="Descrição">
+					<h:outputText value="#{item.produto.descricao}" />
+				</p:column>
+				<p:column headerText="Preço Un.">
+					<h:outputText value="#{item.produto.preco}">
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2"/>
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Quantidade">
+					<h:outputText value="#{item.quantidade}" />
+				</p:column>
+				<p:column headerText="Preço Parcial">
+					<h:outputText value="#{item.valorParcial}" >
+						<f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2"/>
+					</h:outputText>
+				</p:column>
+				
+				<p:column headerText="Fabricante"
+					sortBy="#{produto.fabricante.descricao}"
+					filterBy="#{produto.fabricante.descricao}">
+					<h:outputText value="#{produto.fabricante.descricao}" />
+				</p:column>
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-minus" update=":message" >
+						<f:attribute name="itemSelecionado" value="#{item}" />
+					</p:commandButton>
+					
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+		
+		<p:panel header="Total">
+		
+		</p:panel>
+	</h:form>
+</h:body>
+</html>
